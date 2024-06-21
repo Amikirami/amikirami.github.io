@@ -94,6 +94,7 @@
 
             // Display QR code result
             if (code) {
+                qrResult.textContent=""
                 var trackLink = code.data;
                 // Check if the scanned QR code is a valid Spotify track link
                 var trackId = getSpotifyTrackId(trackLink);
