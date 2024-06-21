@@ -14,17 +14,6 @@
             margin: 0;
             overflow: hidden; /* Ensure no scroll bars */
         }
-        .orange-rectangle {
-            position: absolute;
-            top: 75%;
-            left: 0;
-            width: 50%;
-            height: 80px; /* Match the height of the Spotify embed */
-            background-color: orange;
-            z-index: 9999; /* Bring to front */
-            transform: translateY(-50%);
-            pointer-events: none;
-        }
         h1 {
             font-size: 2em;
             margin-bottom: 20px;
@@ -93,7 +82,6 @@
     </style>
 </head>
 <body>
-    <div class="orange-rectangle">don't judge XD</div>
     <div id="container">
         <h1>Scan QR Code to Play Music</h1>
         <video id="video" playsinline autoplay></video>
