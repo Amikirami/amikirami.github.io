@@ -16,7 +16,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            height: 94%;
+            height: 93%;
             width: 85%;
             z-index: 1; /* Ensure it is above other elements */
             display: none; /* Hide by default */
@@ -44,7 +44,6 @@
         <div id="spotifyEmbed" class="spotify-embed">
             <div class="orange-rectangle" id="orangeRectangle"></div>
             <div id="spotifyPlayer" class="spotify-player"></div>
-            
         </div>
         <div id="qrResult" class="mt-4" style="font-size: 1.2em;"></div>
     </div>
@@ -100,7 +99,7 @@
                 var trackId = getSpotifyTrackId(trackLink);
                 if (trackId) {
                     // Embed the Spotify player with the extracted track ID
-                    var embedCode = '<iframe src="https://open.spotify.com/embed/track/' + trackId + '?theme=dark" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
+                    var embedCode = '<iframe src="https://open.spotify.com/embed/track/' + trackId + '?theme=dark&autoplay=1&view=coverart" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
                     spotifyPlayerContainer.innerHTML = embedCode;
                     orangeRectangle.style.display = 'block'; // Show the orange rectangle
                 } else {
