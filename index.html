@@ -118,10 +118,13 @@
         var spotifyOverlay = document.getElementById('spotifyOverlay');
 
         // Get access to the camera
+         const constraints = {
+            advanced: [{
+                facingMode: "environment"
+            }]
+        };
         navigator.mediaDevices.getUserMedia({ 
-            video: {
-                facingMode: 'environment'
-            }})
+            video: constraints})
             .then(function(stream) {
                 video.srcObject = stream;
                 video.play();
