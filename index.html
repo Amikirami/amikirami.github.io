@@ -7,38 +7,75 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #1a1a1a;
+            background-color: #6205bf; /* Darker background */
+            color: #ddd; /* Light text */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            padding: 20px;
+            background-color: rgba(20, 20, 20, 0.9); /* Slightly transparent dark background */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #f0f0f0; /* Lighter heading */
+        }
+        .btn-danger {
+            background-color: #ff5555; /* Red button */
+            border-color: #ff5555;
             color: #fff;
-            overflow: hidden; /* Ensure no scroll bars */
+            transition: background-color 0.3s ease;
+        }
+        .btn-danger:hover {
+            background-color: #ff7777; /* Lighter red on hover */
+        }
+        #video {
+            width: 100%;
+            border: 5px solid #ddd; /* Light gray border */
+            border-radius: 10px;
+        }
+        #qrResult {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #ccc; /* Lighter text color */
+        }
+        .spotify-embed {
+            margin-top: 20px;
+            position: relative;
+            width: 100%;
+            max-width: 300px;
         }
         .orange-rectangle {
             position: absolute;
             top: 0;
             left: 0;
-            height: 93%;
+            height: 94%;
             width: 85%;
-            z-index: 1; /* Ensure it is above other elements */
-            display: none; /* Hide by default */
-            backdrop-filter: blur(14px); 
-            background-color: rgba(144, 12, 63, 1); 
-        }
-        .spotify-embed {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            margin-top: 20px;
+            z-index: 1;
+            background-color: #ff9f43; /* Orange rectangle */
+            display: none;
         }
         .spotify-player {
             position: relative;
-            z-index: 0; /* Ensure Spotify player is behind other elements */
+            z-index: 0;
         }
     </style>
 </head>
-<body class="d-flex flex-column justify-content-center align-items-center vh-100 text-center">
-    <div id="container" class="container">
-        <h1 class="mb-4">Hipster BirdieBoys Edition - Szwecja 2024</h1>
-        <div class="embed-responsive embed-responsive-4by3 mb-4" style="max-width: 300px;">
-            <video id="video" class="embed-responsive-item border border-white rounded" playsinline autoplay></video>
+<body>
+    <div class="container">
+        <h1>Hipster BirdieBoys Edition - Szwecja 2024</h1>
+        <div class="embed-responsive embed-responsive-4by3 mb-4">
+            <video id="video" class="embed-responsive-item" playsinline autoplay></video>
         </div>
         <canvas id="canvas" class="d-none"></canvas>
         <button id="scanQRButton" class="btn btn-danger mb-4">Scan QR Code</button>
@@ -46,7 +83,7 @@
             <div class="orange-rectangle" id="orangeRectangle"></div>
             <div id="spotifyPlayer" class="spotify-player"></div>
         </div>
-        <div id="qrResult" class="mt-4" style="font-size: 1.2em;"></div>
+        <div id="qrResult"></div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.min.js"></script>
@@ -61,7 +98,6 @@
         var spotifyPlayerContainer = document.getElementById('spotifyPlayer');
         var orangeRectangle = document.getElementById('orangeRectangle');
 
-        // Get access to the camera
         const constraints = {
             video: {
                 facingMode: { ideal: "environment" }
@@ -78,53 +114,38 @@
                 console.log("An error occurred: " + err);
             });
 
-        // Scan QR code button click event
         document.getElementById('scanQRButton').addEventListener('click', function() {
-            // Ensure the canvas dimensions match the video dimensions
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-
-            // Draw video frame onto the canvas
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // Get image data from the canvas
             var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-            // Decode QR code from image data
             var code = jsQR(imageData.data, imageData.width, imageData.height);
-
-            // Display QR code result
+            
             if (code) {
-                qrResult.textContent=""
+                qrResult.textContent = "";
                 var trackLink = code.data;
-                // Check if the scanned QR code is a valid Spotify track link
                 var trackId = getSpotifyTrackId(trackLink);
                 if (trackId) {
-                    // Embed the Spotify player with the extracted track ID
                     var embedCode = '<iframe src="https://open.spotify.com/embed/track/' + trackId + '?theme=dark&autoplay=1&view=coverart" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
                     spotifyPlayerContainer.innerHTML = embedCode;
-                    orangeRectangle.style.display = 'block'; // Show the orange rectangle
+                    orangeRectangle.style.display = 'block';
                 } else {
                     qrResult.textContent = "Not a valid Spotify track link.";
-                    // Clear Spotify embed if not a valid track link
                     spotifyPlayerContainer.innerHTML = '';
-                    orangeRectangle.style.display = 'none'; // Hide the orange rectangle
+                    orangeRectangle.style.display = 'none';
                 }
             } else {
                 qrResult.textContent = "No QR Code detected.";
-                // Clear Spotify embed if no QR code detected
                 spotifyPlayerContainer.innerHTML = '';
-                orangeRectangle.style.display = 'none'; // Hide the orange rectangle
+                orangeRectangle.style.display = 'none';
             }
         });
 
-        // Function to extract Spotify track ID from a Spotify track link
         function getSpotifyTrackId(trackLink) {
             var spotifyPattern = /spotify\.com\/track\/([a-zA-Z0-9]{22})/;
             var match = trackLink.match(spotifyPattern);
-            return match ? match[1] : null; // Return the track ID or null if not found
+            return match ? match[1] : null;
         }
     </script>
-
 </body>
 </html>
