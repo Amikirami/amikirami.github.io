@@ -11,8 +11,25 @@
             color: #fff;
             overflow: hidden; /* Ensure no scroll bars */
         }
-        .spotify-overlay {
-            background-color: rgba(0, 0, 0, 0.5); /* Adjust opacity as needed */
+        .orange-rectangle {
+            background-color: orange;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 94%;
+            width: 85%;
+            z-index: 1; /* Ensure it is above other elements */
+            display: none; /* Hide by default */
+        }
+        .spotify-embed {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+        }
+        .spotify-player {
+            position: relative;
+            z-index: 0; /* Ensure Spotify player is behind other elements */
         }
     </style>
 </head>
@@ -24,10 +41,10 @@
         </div>
         <canvas id="canvas" class="d-none"></canvas>
         <button id="scanQRButton" class="btn btn-danger mb-4">Scan QR Code</button>
-        <div id="spotifyEmbed" class="spotify-embed position-relative w-100" style="max-width: 300px;">
-            <div class="spotify-overlay position-absolute d-flex align-items-center justify-content-center rounded" style="width: 100%; height: 100%;">
-                <div class="spotify-overlay-text">Loading...</div>
-            </div>
+        <div id="spotifyEmbed" class="spotify-embed">
+            <div class="orange-rectangle" id="orangeRectangle"></div>
+            <div id="spotifyPlayer" class="spotify-player"></div>
+            
         </div>
         <div id="qrResult" class="mt-4" style="font-size: 1.2em;"></div>
     </div>
@@ -41,11 +58,9 @@
         var canvas = document.getElementById('canvas');
         var context = canvas.getContext('2d');
         var qrResult = document.getElementById('qrResult');
-        var spotifyEmbed = document.getElementById('spotifyEmbed');
-        var spotifyPlayer;
-        var spotifyOverlay = document.getElementById('spotifyOverlay');
+        var spotifyPlayerContainer = document.getElementById('spotifyPlayer');
+        var orangeRectangle = document.getElementById('orangeRectangle');
 
-        
         // Get access to the camera
         const constraints = {
             video: {
@@ -53,7 +68,6 @@
             }
         };
 
-        
         navigator.mediaDevices.getUserMedia(constraints)
             .then(function(stream) {
                 console.log('Camera stream obtained:', stream);
@@ -86,23 +100,20 @@
                 var trackId = getSpotifyTrackId(trackLink);
                 if (trackId) {
                     // Embed the Spotify player with the extracted track ID
-                    var embedCode = '<iframe id="spotifyPlayer" src="https://open.spotify.com/embed/track/' + trackId + '?theme=dark" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
-                    spotifyEmbed.innerHTML = embedCode;
-                    spotifyPlayer = document.getElementById('spotifyPlayer');
-                    // Wait for the Spotify player to load fully
-                    //spotifyPlayer.onload = function() {
-                    //    // Hide the loading overlay once the player is loaded
-                    //    spotifyOverlay.style.display = 'none';
-                    //};
+                    var embedCode = '<iframe src="https://open.spotify.com/embed/track/' + trackId + '?theme=dark" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>';
+                    spotifyPlayerContainer.innerHTML = embedCode;
+                    orangeRectangle.style.display = 'block'; // Show the orange rectangle
                 } else {
                     qrResult.textContent = "Not a valid Spotify track link.";
                     // Clear Spotify embed if not a valid track link
-                    spotifyEmbed.innerHTML = '';
+                    spotifyPlayerContainer.innerHTML = '';
+                    orangeRectangle.style.display = 'none'; // Hide the orange rectangle
                 }
             } else {
                 qrResult.textContent = "No QR Code detected.";
                 // Clear Spotify embed if no QR code detected
-                spotifyEmbed.innerHTML = '';
+                spotifyPlayerContainer.innerHTML = '';
+                orangeRectangle.style.display = 'none'; // Hide the orange rectangle
             }
         });
 
