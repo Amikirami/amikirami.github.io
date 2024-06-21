@@ -106,7 +106,7 @@
         <button id="scanQRButton">Scan QR Code</button>
         <div id="spotifyEmbed" class="spotify-embed">
             <div class="spotify-overlay" id="spotifyOverlay">
-                <div class="spotify-overlay-text"></div>
+                <div class="spotify-overlay-text">Waiting for you to scan...</div>
             </div>
         </div>
     </div>
@@ -154,6 +154,7 @@
             // Display QR code result
             if (code) {
                 var trackLink = code.data;
+                qrResult.textContent = "QR Code scanned: " + trackLink;
                 // Check if the scanned QR code is a valid Spotify track link
                 var trackId = getSpotifyTrackId(trackLink);
                 if (trackId) {
